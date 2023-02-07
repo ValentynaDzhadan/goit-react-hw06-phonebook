@@ -9,7 +9,6 @@ export const ContactForm = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
-
     const form = event.currentTarget;
     const name = form.elements.name.value;
     const tel = form.elements.number.value;
