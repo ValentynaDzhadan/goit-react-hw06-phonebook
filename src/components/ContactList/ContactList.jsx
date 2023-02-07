@@ -1,16 +1,28 @@
-import PropTypes from 'prop-types';
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeContact } from 'redux/contacts/slice.contacts';
 
-export const ContactList = ({ deleteContactById, filteredArrOfContacts }) => {
+export const ContactList = () => {
+  const myContacts = useSelector(state => state.contacts.contactsData);
+  const filter = useSelector(state => state.filter.search);
+  const dispatch = useDispatch();
+
+  const filteredConacts = useMemo(() => {
+    return myContacts.filter(el =>
+      el.name.toLowerCase().includes(filter.toLowerCase().trim())
+    );
+  }, [myContacts, filter]);
+
   return (
     <ul>
-      {filteredArrOfContacts.map(el => (
+      {filteredConacts.map(el => (
         <li key={el.id}>
           <span>
             {el.name} : {el.number}
           </span>
           <button
             onClick={() => {
-              deleteContactById(el.id);
+              dispatch(removeContact(el.id));
             }}
           >
             Delete
@@ -19,9 +31,4 @@ export const ContactList = ({ deleteContactById, filteredArrOfContacts }) => {
       ))}
     </ul>
   );
-};
-
-ContactList.propTypes = {
-  deleteContactById: PropTypes.func.isRequired,
-  filteredArrOfContacts: PropTypes.array.isRequired,
 };

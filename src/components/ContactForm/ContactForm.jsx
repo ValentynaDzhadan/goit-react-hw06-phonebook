@@ -1,6 +1,32 @@
-import PropTypes from 'prop-types';
+import { v4 as uuidv4 } from 'uuid';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNewContact } from 'redux/contacts/slice.contacts';
 
-export const ContactForm = ({ handleSubmit }) => {
+export const ContactForm = () => {
+  const myContacts = useSelector(state => state.contacts.contactsData);
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = event => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const name = form.elements.name.value;
+    const tel = form.elements.number.value;
+    const isNameExist = myContacts.find(el => el.name === name);
+    if (isNameExist) {
+      alert(`${name} is already in contacts`);
+    } else {
+      const newContact = {
+        id: uuidv4(),
+        name: name,
+        number: tel,
+      };
+      dispatch(addNewContact(newContact));
+    }
+    form.reset();
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <label>
@@ -28,8 +54,4 @@ export const ContactForm = ({ handleSubmit }) => {
       <button type="submit">Add contact</button>
     </form>
   );
-};
-
-ContactForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
 };
